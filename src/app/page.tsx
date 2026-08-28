@@ -1,69 +1,70 @@
-import Image from "next/image";
+import { supabase } from '@/lib/supabase'
 
-export default function Home() {
+export const revalidate = 0; // Dynamic rendering
+
+export default async function Home() {
+  const { data: products } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+  const { data: categories } = await supabase.from('categories').select('*').order('sort_order', { ascending: true });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="col" style={{ minHeight: '100vh', background: '#F9F8F6' }}>
+      <header className="row spread" style={{ padding: '20px 40px', background: '#fff', borderBottom: '1px solid #EAE6DF' }}>
+        <div className="brand row" style={{ gap: '10px', alignItems: 'center' }}>
+          <div style={{ width: 40, height: 40, background: '#E29A2C', borderRadius: '50%' }}></div>
+          <div className="col">
+            <span style={{ fontWeight: 600, fontSize: '1.2rem', color: '#235240' }}>Nuvana</span>
+            <span style={{ fontSize: '0.8rem', color: '#8A9A5B' }}>Premium Dry Fruits & Nuts</span>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <nav className="row" style={{ gap: '20px' }}>
+          <a href="#" style={{ color: '#235240', fontWeight: 500 }}>Shop</a>
+          <a href="#" style={{ color: '#8A9A5B' }}>About</a>
+          <a href="#" style={{ color: '#8A9A5B' }}>Contact</a>
+        </nav>
+      </header>
+
+      <section style={{ padding: '60px 40px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '3rem', color: '#235240', marginBottom: '20px' }}>Nature's finest, sorted by hand.</h1>
+        <p style={{ fontSize: '1.2rem', color: '#8A9A5B', maxWidth: 600, margin: '0 auto' }}>
+          Freshly packed dry fruits and nuts, sourced directly from the best farms around the world.
+        </p>
+      </section>
+
+      <section style={{ padding: '40px' }}>
+        <h2 style={{ fontSize: '1.5rem', color: '#235240', marginBottom: '30px' }}>Categories</h2>
+        <div className="row wrap" style={{ gap: '20px' }}>
+          {categories?.map((cat) => (
+            <div key={cat.id} className="col center" style={{ padding: '20px', background: cat.tint || '#eee', borderRadius: '12px', minWidth: '150px' }}>
+              <span style={{ fontWeight: 600, color: '#235240' }}>{cat.name}</span>
+            </div>
+          ))}
+          {(!categories || categories.length === 0) && (
+            <p>No categories found or Supabase not connected.</p>
+          )}
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section style={{ padding: '40px' }}>
+        <h2 style={{ fontSize: '1.5rem', color: '#235240', marginBottom: '30px' }}>Featured Products</h2>
+        <div className="row wrap" style={{ gap: '20px' }}>
+          {products?.map((prod) => (
+            <div key={prod.id} className="pcard col" style={{ width: '280px', background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+              <div style={{ height: '200px', background: `linear-gradient(150deg, ${prod.grad_from}, ${prod.grad_to})` }}></div>
+              <div className="col" style={{ padding: '20px', gap: '10px' }}>
+                <span style={{ fontWeight: 600, color: '#235240', fontSize: '1.1rem' }}>{prod.name}</span>
+                <span style={{ color: '#8A9A5B', fontSize: '0.9rem' }}>{prod.origin}</span>
+                <div className="row spread" style={{ marginTop: '10px', alignItems: 'center' }}>
+                  <span style={{ fontWeight: 600, color: '#235240', fontSize: '1.2rem' }}>₹{prod.price_inr}</span>
+                  <button style={{ padding: '8px 16px', background: '#235240', color: '#fff', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>Add to Cart</button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {(!products || products.length === 0) && (
+            <p>No products found or Supabase not connected.</p>
+          )}
+        </div>
+      </section>
+    </main>
   );
 }
