@@ -307,46 +307,66 @@ language sql stable security definer set search_path=public as $$
 $$;
 
 alter table profiles enable row level security;
-create policy "profiles self read"   on profiles for select using (id = auth.uid() or is_admin());
+drop policy if exists "profiles self read" on profiles;
+create policy "profiles self read" on profiles for select using (id = auth.uid() or is_admin());
+drop policy if exists "profiles self update" on profiles;
 create policy "profiles self update" on profiles for update using (id = auth.uid());
-create policy "profiles admin all"   on profiles for all    using (is_admin()) with check (is_admin());
+drop policy if exists "profiles admin all" on profiles;
+create policy "profiles admin all" on profiles for all using (is_admin()) with check (is_admin());
 
 alter table categories enable row level security;
+drop policy if exists "cat public read" on categories;
 create policy "cat public read" on categories for select using (true);
+drop policy if exists "cat admin write" on categories;
 create policy "cat admin write" on categories for all using (is_admin()) with check (is_admin());
 
 alter table products enable row level security;
+drop policy if exists "prod public read" on products;
 create policy "prod public read" on products for select using (is_active or is_admin());
+drop policy if exists "prod admin write" on products;
 create policy "prod admin write" on products for all using (is_admin()) with check (is_admin());
 
 alter table addresses enable row level security;
+drop policy if exists "addr owner" on addresses;
 create policy "addr owner" on addresses for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 alter table carts enable row level security;
+drop policy if exists "cart owner" on carts;
 create policy "cart owner" on carts for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 alter table cart_items enable row level security;
+drop policy if exists "cart_items owner" on cart_items;
 create policy "cart_items owner" on cart_items for all
   using (exists(select 1 from carts c where c.id=cart_id and c.user_id=auth.uid()))
   with check (exists(select 1 from carts c where c.id=cart_id and c.user_id=auth.uid()));
 
 alter table orders enable row level security;
+drop policy if exists "orders own read" on orders;
 create policy "orders own read"  on orders for select using (user_id = auth.uid() or is_admin());
+drop policy if exists "orders admin write" on orders;
 create policy "orders admin write" on orders for update using (is_admin()) with check (is_admin());
 alter table order_items enable row level security;
+drop policy if exists "order_items read" on order_items;
 create policy "order_items read" on order_items for select
   using (exists(select 1 from orders o where o.id=order_id
                and (o.user_id=auth.uid() or is_admin())));
 
 alter table reviews enable row level security;
+drop policy if exists "rev public read" on reviews;
 create policy "rev public read" on reviews for select using (status='published' or is_admin());
+drop policy if exists "rev insert" on reviews;
 create policy "rev insert" on reviews for insert with check (auth.uid() is not null);
+drop policy if exists "rev admin update" on reviews;
 create policy "rev admin update" on reviews for update using (is_admin()) with check (is_admin());
 
 alter table testimonials enable row level security;
+drop policy if exists "tst read" on testimonials;
 create policy "tst read" on testimonials for select using (true);
+drop policy if exists "tst admin" on testimonials;
 create policy "tst admin" on testimonials for all using (is_admin()) with check (is_admin());
 alter table store_settings enable row level security;
+drop policy if exists "set read" on store_settings;
 create policy "set read" on store_settings for select using (true);
+drop policy if exists "set admin" on store_settings;
 create policy "set admin" on store_settings for all using (is_admin()) with check (is_admin());
 
 grant execute on function place_order(uuid,text,text,payment_method,order_channel,jsonb) to anon, authenticated;
