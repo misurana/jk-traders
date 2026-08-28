@@ -2,6 +2,7 @@
 import React from 'react'
 import { ShoppingCart, Star } from 'lucide-react'
 import { useCart } from './CartProvider'
+import Link from 'next/link'
 
 export function ProductCard({ p }: { p: any }) {
   const soldOut = p.stock <= 0
@@ -9,11 +10,13 @@ export function ProductCard({ p }: { p: any }) {
 
   return (
     <article className="pcard">
-      <div className="pcard-media" style={{ cursor: 'pointer', background: `linear-gradient(150deg, ${p.grad_from}, ${p.grad_to})` }}>
+      <Link href={`/product/${p.id}`} className="pcard-media" style={{ display: 'block', cursor: 'pointer', background: `linear-gradient(150deg, ${p.grad_from}, ${p.grad_to})` }}>
         {p.image_url && <img src={p.image_url} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-      </div>
+      </Link>
       <div className="pcard-body">
-        <h3 className="pcard-name" style={{ cursor: 'pointer' }}>{p.name}</h3>
+        <Link href={`/product/${p.id}`} style={{ textDecoration: 'none' }}>
+          <h3 className="pcard-name" style={{ cursor: 'pointer', color: '#235240' }}>{p.name}</h3>
+        </Link>
         <div className="row center gap-6">
           <span className="stars" style={{ display: 'flex' }}>
              {[...Array(5)].map((_, i) => <Star key={i} size={13} fill="#E29A2C" color="#E29A2C" />)}

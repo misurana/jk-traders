@@ -41,7 +41,19 @@ export async function login(formData: FormData) {
   redirect('/')
 }
 
-export async function addToCart(productId: string, unit: string, price: number, qty: number) {
-  // Mock cart action for now if no auth implemented correctly
-  return { success: true }
+export async function checkoutAction(items: { id: string, unit: string, qty: number }[]) {
+  // Mock checkout logic since we don't have full auth setup yet
+  // In a real scenario, this would insert an order into the Supabase 'orders' table
+  // and loop over items to insert into 'order_items' table.
+  const supabase = await createClientServer()
+  
+  // Here we would decrement stock for the checked out items
+  for (const item of items) {
+    const { data: p } = await supabase.from('products').select('stock, sold_count').eq('id', item.id).single()
+    if (p && p.stock >= item.qty) {
+      await supabase.from('products').update({ stock: p.stock - item.qty, sold_count: (p.sold_count || 0) + item.qty }).eq('id', item.id)
+    }
+  }
+
+  return { success: true, message: 'Order placed successfully!' }
 }

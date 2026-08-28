@@ -2,6 +2,7 @@
 import React from 'react'
 import { ShoppingCart } from 'lucide-react'
 import { useCart } from './CartProvider'
+import Link from 'next/link'
 
 export function Header() {
   const { setCartOpen, count } = useCart()
@@ -17,9 +18,9 @@ export function Header() {
       </div>
       
       <nav className="row" style={{ gap: '20px', display: 'flex', alignItems: 'center' }}>
-        <a href="#" style={{ color: '#235240', fontWeight: 500, textDecoration: 'none' }}>Shop</a>
-        <a href="#" style={{ color: '#8A9A5B', textDecoration: 'none' }}>About</a>
-        <a href="#" style={{ color: '#8A9A5B', textDecoration: 'none' }}>Contact</a>
+        <Link href="/shop" style={{ color: '#235240', fontWeight: 500, textDecoration: 'none' }}>Shop</Link>
+        <Link href="#" style={{ color: '#8A9A5B', textDecoration: 'none' }}>About</Link>
+        <Link href="#" style={{ color: '#8A9A5B', textDecoration: 'none' }}>Contact</Link>
         
         <button 
           onClick={() => setCartOpen(true)}

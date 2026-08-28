@@ -75,7 +75,19 @@ export function CartDrawer() {
                 {total >= 999 ? 'Free' : '₹59'}
               </span>
             </div>
-            <button className="btn btn-saffron btn-lg btn-block" style={{ width: '100%', background: '#E29A2C', color: '#fff', padding: '16px', borderRadius: '8px', border: 'none', fontWeight: 600, fontSize: '16px', cursor: 'pointer' }}>
+            <button 
+              className="btn btn-saffron btn-lg btn-block" 
+              style={{ width: '100%', background: '#E29A2C', color: '#fff', padding: '16px', borderRadius: '8px', border: 'none', fontWeight: 600, fontSize: '16px', cursor: 'pointer' }}
+              onClick={async () => {
+                const { checkoutAction } = await import('@/app/actions')
+                const res = await checkoutAction(cart.map(c => ({ id: c.product.id, unit: c.unit, qty: c.qty })))
+                if (res.success) {
+                  alert(res.message)
+                  cart.forEach(c => removeFromCart(c.key))
+                  setCartOpen(false)
+                }
+              }}
+            >
               Checkout · ₹{total + (total >= 999 ? 0 : 59)}
             </button>
             <p style={{ textAlign: 'center', marginTop: '12px', color: '#8A9A5B', fontSize: '12px' }}>Secure checkout</p>
