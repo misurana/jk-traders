@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabase'
 
+import { ProductCard } from '@/components/ProductCard';
+
 export const revalidate = 0; // Dynamic rendering
 
 export default async function Home() {
@@ -48,17 +50,7 @@ export default async function Home() {
         <h2 style={{ fontSize: '1.5rem', color: '#235240', marginBottom: '30px' }}>Featured Products</h2>
         <div className="row wrap" style={{ gap: '20px' }}>
           {products?.map((prod) => (
-            <div key={prod.id} className="pcard col" style={{ width: '280px', background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-              <div style={{ height: '200px', background: `linear-gradient(150deg, ${prod.grad_from}, ${prod.grad_to})` }}></div>
-              <div className="col" style={{ padding: '20px', gap: '10px' }}>
-                <span style={{ fontWeight: 600, color: '#235240', fontSize: '1.1rem' }}>{prod.name}</span>
-                <span style={{ color: '#8A9A5B', fontSize: '0.9rem' }}>{prod.origin}</span>
-                <div className="row spread" style={{ marginTop: '10px', alignItems: 'center' }}>
-                  <span style={{ fontWeight: 600, color: '#235240', fontSize: '1.2rem' }}>₹{prod.price_inr}</span>
-                  <button style={{ padding: '8px 16px', background: '#235240', color: '#fff', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>Add to Cart</button>
-                </div>
-              </div>
-            </div>
+            <ProductCard key={prod.id} p={prod} />
           ))}
           {(!products || products.length === 0) && (
             <p>No products found or Supabase not connected.</p>
