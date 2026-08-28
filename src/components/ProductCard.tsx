@@ -1,9 +1,11 @@
 'use client'
 import React from 'react'
 import { ShoppingCart, Star } from 'lucide-react'
+import { useCart } from './CartProvider'
 
 export function ProductCard({ p }: { p: any }) {
   const soldOut = p.stock <= 0
+  const { addToCart } = useCart()
 
   return (
     <article className="pcard">
@@ -24,7 +26,9 @@ export function ProductCard({ p }: { p: any }) {
             {p.mrp_inr > p.price_inr && <span className="was" style={{ textDecoration: 'line-through', color: '#999', marginLeft: '6px' }}>₹{p.mrp_inr}</span>}
             <span className="unit" style={{ color: '#8A9A5B', marginLeft: '6px' }}>/ {p.unit}</span>
           </span>
-          <button className="add-btn" disabled={soldOut} style={{ padding: '8px', background: '#235240', color: 'white', borderRadius: '50%', border: 'none', cursor: soldOut ? 'not-allowed' : 'pointer' }}>
+          <button className="add-btn" disabled={soldOut} 
+                  onClick={() => addToCart(p, p.unit, p.price_inr, 1)}
+                  style={{ padding: '8px', background: '#235240', color: 'white', borderRadius: '50%', border: 'none', cursor: soldOut ? 'not-allowed' : 'pointer' }}>
             <ShoppingCart size={16} />
           </button>
         </div>
